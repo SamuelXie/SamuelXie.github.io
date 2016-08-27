@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>iOS 中KVC、KVO、NSNotification、delegate 总结及区别 | Blessing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Samuel在学习完KeyValue机制后，对iOS的应用有了新的认识，在这里写下对KVC的一些看法，才疏学浅，文中难免有纰漏，希望各位大神指正。
+
+KVCKVC指的是NSKeyValueCoding，是NSObject的一个Category，可以不通过调用accessor对实例变量进行读取NSObject(NSKeyValueCoding)的方法有三类: 
+
+getting values
+se">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 中KVC、KVO、NSNotification、delegate 总结及区别">
+<meta property="og:url" content="http://poino.cn/2016/03/30/iOS中KVC、KVO、NSNotification、delegate总结及区别/index.html">
+<meta property="og:site_name" content="Blessing">
+<meta property="og:description" content="Samuel在学习完KeyValue机制后，对iOS的应用有了新的认识，在这里写下对KVC的一些看法，才疏学浅，文中难免有纰漏，希望各位大神指正。
+
+KVCKVC指的是NSKeyValueCoding，是NSObject的一个Category，可以不通过调用accessor对实例变量进行读取NSObject(NSKeyValueCoding)的方法有三类: 
+
+getting values
+se">
+<meta property="og:updated_time" content="2016-04-21T10:04:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS 中KVC、KVO、NSNotification、delegate 总结及区别">
+<meta name="twitter:description" content="Samuel在学习完KeyValue机制后，对iOS的应用有了新的认识，在这里写下对KVC的一些看法，才疏学浅，文中难免有纰漏，希望各位大神指正。
+
+KVCKVC指的是NSKeyValueCoding，是NSObject的一个Category，可以不通过调用accessor对实例变量进行读取NSObject(NSKeyValueCoding)的方法有三类: 
+
+getting values
+se">
+  
+    <link rel="alternative" href="/atom.xml" title="Blessing" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/assets/blogImg/portrait.png" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Samuel Xie</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">眼角凝固着寒冬黑色的风，包裹着寂寞拖延时间褪色。</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						
+						<li>About</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/SamuelXie" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://www.weibo.com/u/5270169644/" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/iOS基础/" style="font-size: 10px;">iOS基础</a> <a href="/tags/ss/" style="font-size: 10px;">ss</a>
+					</div>
+				</section>
+				
+				
+				
+
+				
+				
+				<section class="switch-part switch-part3">
+				
+					<div id="js-aboutme">Hey! I am Samuel Xie. An iOS stubborn character ;)</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Samuel Xie</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/assets/blogImg/portrait.png" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Samuel Xie</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">眼角凝固着寒冬黑色的风，包裹着寂寞拖延时间褪色。</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/SamuelXie" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://www.weibo.com/u/5270169644/" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-iOS中KVC、KVO、NSNotification、delegate总结及区别" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/30/iOS中KVC、KVO、NSNotification、delegate总结及区别/" class="article-date">
+  	<time datetime="2016-03-29T16:00:00.000Z" itemprop="datePublished">2016-03-30</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS 中KVC、KVO、NSNotification、delegate 总结及区别
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+	</div>
+
+        
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Objective-C/">Objective-C</a>
+	</div>
+
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>Samuel在学习完KeyValue机制后，对iOS的应用有了新的认识，在这里写下对KVC的一些看法，才疏学浅，文中难免有纰漏，希望各位大神指正。</p>
+</blockquote>
+<h1 id="KVC"><a href="#KVC" class="headerlink" title="KVC"></a>KVC</h1><p>KVC指的是NSKeyValueCoding，是NSObject的一个Category，可以不通过调用accessor对实例变量进行读取NSObject(NSKeyValueCoding)的方法有三类: </p>
+<ul>
+<li>getting values</li>
+<li>setting values</li>
+<li>validation<a id="more"></a>
+<h2 id="常见方法"><a href="#常见方法" class="headerlink" title="常见方法"></a>常见方法</h2></li>
+</ul>
+<h3 id="getting-values"><a href="#getting-values" class="headerlink" title="getting values"></a>getting values</h3><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">id</span> _Nullable)valueForKey:(<span class="built_in">NSString</span> * _Nonnull)key</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">值</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">key</td>
+<td style="text-align:center">要取的实例变量名字的字符串</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">id</span> _Nullable)valueForKeyPath:(<span class="built_in">NSString</span> * _Nonnull)keyPath</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">值</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">keyPath</td>
+<td style="text-align:center">取的实例变量，可以用“.”来连接多个嵌套的key</td>
+</tr>
+</tbody>
+</table>
+<h3 id="setting-values"><a href="#setting-values" class="headerlink" title="setting values"></a>setting values</h3><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setValue:(<span class="keyword">id</span> _Nullable)value forKeyPath:(<span class="built_in">NSString</span> * _Nonnull)keyPath</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">值</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">value</td>
+<td style="text-align:center">要放入的值</td>
+</tr>
+<tr>
+<td style="text-align:center">keyPath</td>
+<td style="text-align:center">要修改的实例变量位置</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setValue:(<span class="keyword">id</span> _Nullable)value forKey:(<span class="built_in">NSString</span> * _Nonnull)key</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">值</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">value</td>
+<td style="text-align:center">要放入的值</td>
+</tr>
+<tr>
+<td style="text-align:center">key</td>
+<td style="text-align:center">要修改的实例变量位置</td>
+</tr>
+</tbody>
+</table>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>在main.m中：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc, const char * argv[]) &#123;</span><br><span class="line">    @autoreleasepool &#123;</span><br><span class="line">        SCTeacher *teacher = [SCTeacher new];</span><br><span class="line">        SCStudent *student = [SCStudent new];</span><br><span class="line">        [teacher setStudent:student];</span><br><span class="line">        NSLog(@"老师的姓名：%@", [teacher valueForKey:@"name"]);</span><br><span class="line">        //NSLog(@"老师的年龄：%zd", [teacher valueForKey:@"age"]);</span><br><span class="line">        //error. this class is not key value coding-compliant for the key age.</span><br><span class="line">        NSLog(@"学生的姓名：%@", [teacher valueForKeyPath:@"student.name"]);</span><br><span class="line">        [teacher setValue:@"阿卡西" forKey:@"name"];</span><br><span class="line">        [teacher setValue:@"佐助" forKeyPath:@"student.name”];</span><br><span class="line">        NSLog(@"老师的姓名：%@", [teacher valueForKey:@"name"]);</span><br><span class="line">        NSLog(@"学生的姓名：%@", [teacher valueForKeyPath:@"student.name"]);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>打印结果：<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2016</span><span class="number">-03</span><span class="number">-31</span> <span class="number">17</span>:<span class="number">30</span>:<span class="number">31.394</span> KVCDemo[<span class="number">1154</span>:<span class="number">94182</span>] 老师的姓名：(null)</span><br><span class="line"><span class="number">2016</span><span class="number">-03</span><span class="number">-31</span> <span class="number">17</span>:<span class="number">30</span>:<span class="number">31.395</span> KVCDemo[<span class="number">1154</span>:<span class="number">94182</span>] 学生的姓名：(null)</span><br><span class="line"><span class="number">2016</span><span class="number">-03</span><span class="number">-31</span> <span class="number">17</span>:<span class="number">30</span>:<span class="number">31.395</span> KVCDemo[<span class="number">1154</span>:<span class="number">94182</span>] 老师的姓名：阿卡西</span><br><span class="line"><span class="number">2016</span><span class="number">-03</span><span class="number">-31</span> <span class="number">17</span>:<span class="number">30</span>:<span class="number">31.395</span> KVCDemo[<span class="number">1154</span>:<span class="number">94182</span>] 学生的姓名：佐助</span><br></pre></td></tr></table></figure></p>
+<p>注意：由于返回值为id，所以KVC只能用于pointer对象，这是由于ARC机制所决定的。</p>
+<h1 id="KVO"><a href="#KVO" class="headerlink" title="KVO"></a>KVO</h1><p>KVO指的是NSKeyValueObserving，是NSObject的一个Category，是观察者模式的一种实现，可以在被观察对象被修改时得到通知，执行自己定义的方法。但只能在被观察对象通过KVC被修改时得到通知。</p>
+<h2 id="使用步骤"><a href="#使用步骤" class="headerlink" title="使用步骤"></a>使用步骤</h2><ol>
+<li><p>添加监听</p>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)addObserver:(<span class="built_in">NSObject</span> * _Nonnull)anObserver forKeyPath:(<span class="built_in">NSString</span> * _Nonnull)keyPath options:(<span class="built_in">NSKeyValueObservingOptions</span>)options context:(<span class="keyword">void</span> * _Nullable)context</span><br></pre></td></tr></table></figure>
+<p> 其中，NSKeyValueObservingOptions一共有四种</p>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> &#123;</span><br><span class="line">   <span class="built_in">NSKeyValueObservingOptionNew</span> = <span class="number">0x01</span>,<span class="comment">//发送新值</span></span><br><span class="line">   <span class="built_in">NSKeyValueObservingOptionOld</span> = <span class="number">0x02</span>,<span class="comment">//发送旧值</span></span><br><span class="line">   <span class="built_in">NSKeyValueObservingOptionInitial</span> = <span class="number">0x04</span>,<span class="comment">//一旦注册，立刻调用一次</span></span><br><span class="line">   <span class="built_in">NSKeyValueObservingOptionPrior</span> = <span class="number">0x08</span> <span class="comment">//改变前后分两次调用</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="built_in">NSUInteger</span> <span class="built_in">NSKeyValueObservingOptions</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>实现observeValueForKeyPath:ofObject:change:context:方法，这个方法当观察的属性变化时会自动调用</p>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)observeValueForKeyPath:(<span class="built_in">NSString</span> * _Nullable)keyPath ofObject:(<span class="keyword">id</span> _Nullable)object change:(<span class="built_in">NSDictionary</span>&lt;<span class="built_in">NSString</span> *,<span class="keyword">id</span>&gt; * _Nullable)change context:(<span class="keyword">void</span> * _Nullable)context &#123;</span><br><span class="line">     …</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解除注册removeObserver:forKeyPath:context:</p>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)removeObserver:(<span class="built_in">NSObject</span> * _Nonnull)anObserver forKeyPath:(<span class="built_in">NSString</span> * _Nonnull)keyPath</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h2><p>在main.m中：<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[]) &#123;</span><br><span class="line">    <span class="keyword">@autoreleasepool</span> &#123;</span><br><span class="line">        SCTeacher *teacher = [SCTeacher new];</span><br><span class="line">        SCStudent *student = [SCStudent new];</span><br><span class="line">        [teacher setValue:<span class="string">@"卡卡西"</span> forKey:<span class="string">@"name"</span>];</span><br><span class="line">       </span><br><span class="line">        [teacher addObserver:student forKeyPath:<span class="string">@"name"</span> options:<span class="built_in">NSKeyValueObservingOptionOld</span> | <span class="built_in">NSKeyValueObservingOptionNew</span> context:<span class="literal">nil</span>];</span><br><span class="line">        </span><br><span class="line">        [teacher setValue:<span class="string">@"自来也"</span> forKey:<span class="string">@"name"</span>];</span><br><span class="line">        </span><br><span class="line">        [teacher removeObserver:student forKeyPath:<span class="string">@"name"</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在SCStudent.m中：<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">SCStudent</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)observeValueForKeyPath:(<span class="built_in">NSString</span> *)keyPath ofObject:(<span class="keyword">id</span>)object change:(<span class="built_in">NSDictionary</span>&lt;<span class="built_in">NSString</span> *,<span class="keyword">id</span>&gt; *)change context:(<span class="keyword">void</span> *)context &#123;</span><br><span class="line">    <span class="keyword">if</span> ([keyPath isEqualToString: <span class="string">@"name"</span>]) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"原来的老师：%@，新的老师是：%@"</span>, [change valueForKey:<span class="built_in">NSKeyValueChangeOldKey</span>], [change valueForKey:<span class="built_in">NSKeyValueChangeNewKey</span>]);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        [<span class="keyword">super</span> observeValueForKeyPath:keyPath ofObject:object change:change context:context];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure></p>
+<p>打印结果：<br><figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2016</span><span class="number">-03</span><span class="number">-31</span> <span class="number">18</span>:<span class="number">40</span>:<span class="number">27.011</span> KVCDemo[<span class="number">1508</span>:<span class="number">159462</span>] 原来的老师：卡卡西，新的老师是：自来也</span><br><span class="line">Program ended with exit code: <span class="number">0</span></span><br></pre></td></tr></table></figure></p>
+<p>注意：addObserver:forKeyPath:options:context: 这是一个主动方法，teacher 说 我要让一个学生知道我的一个值改变了，即观察者是addObserver的对象，解除注册的时候也要teacher 来取消。</p>
+<h1 id="NSNotification"><a href="#NSNotification" class="headerlink" title="NSNotification"></a>NSNotification</h1><p>这是Cocoa Touch中的通知机制，主要有三种：</p>
+<ol>
+<li>广播通知</li>
+<li>本地通知</li>
+<li>推送通知</li>
+</ol>
+<p>这里主要介绍广播通知 ==&gt; NSNotificationCenter</p>
+<h2 id="使用步骤-1"><a href="#使用步骤-1" class="headerlink" title="使用步骤"></a>使用步骤</h2><ol>
+<li><p>创建一个投送通知</p>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="keyword">void</span>)postNotificationName:(<span class="built_in">NSString</span> * _Nonnull)notificationName object:(<span class="keyword">id</span> _Nullable)notificationSender userInfo:(<span class="built_in">NSDictionary</span> * _Nullable)userInfo</span><br></pre></td></tr></table></figure>
+<p> NSNotificationCenter是单例模式，创建和获得共享实例的方法是defaultCenter</p>
+</li>
+<li><p>监听系统通知</p>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="keyword">void</span>)addObserver:(<span class="keyword">id</span> _Nonnull)notificationObserver selector:(SEL _Nonnull)notificationSelector name:(<span class="built_in">NSString</span> * _Nullable)notificationName object:(<span class="keyword">id</span> _Nullable)notificationSender</span><br></pre></td></tr></table></figure>
+<p> 处理方法的实现</p>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)xxxCompletion:(<span class="built_in">NSMotification</span> *)notification &#123;</span><br><span class="line">     <span class="built_in">NSDictionary</span> *data = [notification userInfo];</span><br><span class="line">     <span class="built_in">NSString</span> *name = [data objectForKey:@“username”];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 最后解除注册</p>
+<figure class="highlight obj-c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">removeObserver:</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">值</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">notificationName</td>
+<td style="text-align:center">通知名称，一般命名为XxxxXxxxNotification</td>
+</tr>
+<tr>
+<td style="text-align:center">notificationSender</td>
+<td style="text-align:center">投送通知时传递过来的对象</td>
+</tr>
+<tr>
+<td style="text-align:center">userInfo</td>
+<td style="text-align:center">投送通知时定义的字典对象，用于传递数据</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">值</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">notificationObserver</td>
+<td style="text-align:center">谁监听</td>
+</tr>
+<tr>
+<td style="text-align:center">notificationSelector</td>
+<td style="text-align:center">处理方法</td>
+</tr>
+<tr>
+<td style="text-align:center">notificationName</td>
+<td style="text-align:center">通知名称</td>
+</tr>
+<tr>
+<td style="text-align:center">notificationSender</td>
+<td style="text-align:center">投送通知时传递过来的对象</td>
+</tr>
+</tbody>
+</table>
+<h1 id="Delegate"><a href="#Delegate" class="headerlink" title="Delegate"></a>Delegate</h1><p>作为最常见的苹果设计模式，在这里不再赘述他的使用方法。<br>实现Protocol，delegate = self，实现相应的代理方法即可。</p>
+<h1 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h1><h2 id="delegate-的-优势-："><a href="#delegate-的-优势-：" class="headerlink" title="delegate 的 优势 ："></a>delegate 的 优势 ：</h2><ol>
+<li>非常严格的语法。所有将听到的事件必须是在delegate协议中有清晰的定义。</li>
+<li>如果delegate中的一个方法没有实现那么就会出现编译警告/错误</li>
+<li>协议必须在controller的作用域范围内定义</li>
+<li>在一个应用中的控制流程是可跟踪的并且是可识别的；</li>
+<li>在一个控制器中可以定义定义多个不同的协议，每个协议有不同的delegates</li>
+<li>没有第三方对象要求保持/监视通信过程。</li>
+<li>能够接收调用的协议方法的返回值。这意味着delegate能够提供反馈信息给controller</li>
+</ol>
+<h3 id="缺点-："><a href="#缺点-：" class="headerlink" title="缺点 ："></a>缺点 ：</h3><ol>
+<li>需要定义很多代码：1.协议定义；2.controller的delegate属性；3.在delegate本身中实现delegate方法定义</li>
+<li>在释放代理对象时，需要小心的将delegate改为nil。一旦设定失败，那么调用释放对象的方法将会出现内存crash</li>
+<li>在一个controller中有多个delegate对象，并且delegate是遵守同一个协议，但还是很难告诉多个对象同一个事件，不过有可能。</li>
+</ol>
+<h2 id="notification的-优势-："><a href="#notification的-优势-：" class="headerlink" title="notification的 优势 ："></a>notification的 优势 ：</h2><ol>
+<li>不需要编写多少代码，实现比较简单；</li>
+<li>对于一个发出的通知，多个对象能够做出反应，即1对多的方式实现简单</li>
+<li>controller能够传递context对象（dictionary），context对象携带了关于发送通知的自定义的信息</li>
+</ol>
+<h3 id="缺点-：-1"><a href="#缺点-：-1" class="headerlink" title="缺点 ："></a>缺点 ：</h3><ol>
+<li>在编译期不会检查通知是否能够被观察者正确的处理； </li>
+<li>在释放注册的对象时，需要在通知中心取消注册；</li>
+<li>在调试的时候应用的工作以及控制过程难跟踪；</li>
+<li>需要第三方对喜爱那个来管理controller与观察者对象之间的联系；</li>
+<li>controller和观察者需要提前知道通知名称、UserInfodictionary keys。如果这些没有在工作区间定义，那么会出现不同步的情况；</li>
+<li>通知发出后，controller不能从观察者获得任何的反馈信息。</li>
+</ol>
+<h2 id="KVO的-优势-："><a href="#KVO的-优势-：" class="headerlink" title="KVO的 优势 ："></a>KVO的 优势 ：</h2><ol>
+<li>能够提供一种简单的方法实现两个对象间的同步。例如：model和view之间同步；</li>
+<li>能够对非我们创建的对象，即内部对象的状态改变作出响应，而且不需要改变内部对象（SKD对象）的实现；</li>
+<li>能够提供观察的属性的最新值以及先前值；</li>
+<li>用key paths来观察属性，因此也可以观察嵌套对象；</li>
+<li>完成了对观察对象的抽象，因为不需要额外的代码来允许观察值能够被观察</li>
+</ol>
+<h3 id="缺点-：-2"><a href="#缺点-：-2" class="headerlink" title="缺点 ："></a>缺点 ：</h3><ol>
+<li>我们观察的属性必须使用strings来定义。因此在编译器不会出现警告以及检查；</li>
+<li>对属性重构将导致我们的观察代码不再可用；</li>
+<li>复杂的“IF”语句要求对象正在观察多个值。这是因为所有的观察代码通过一个方法来指向；</li>
+<li>当释放观察者时不需要移除观察者。</li>
+</ol>
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>delegate比较友好，在使用方法时都是询问发起者，should i do? 所以有返回值<br>而KVO和NSNotification则显得比较霸道，发出通知，剩下的事情就不管了，所以没有返回值</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/04/03/UIScrollView原理/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          UIScrollView原理
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/03/23/GCD简易教程/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">GCD简易教程</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+<div class="share_addthis">
+  <div class="sharing addthis_toolbox share">
+    <a class="addthis_button_facebook_like"></a>
+    <a class="addthis_button_tweet"></a>
+    <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+    <a class="addthis_counter addthis_pill_style"></a>
+  </div>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-560c64c35486b3d4" async="async"></script>
+</div>
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="iOS中KVC、KVO、NSNotification、delegate总结及区别" data-title="iOS 中KVC、KVO、NSNotification、delegate 总结及区别" data-url="http://poino.cn/2016/03/30/iOS中KVC、KVO、NSNotification、delegate总结及区别/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"poino"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Samuel Xie
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

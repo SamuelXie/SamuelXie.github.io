@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>iOS应用启动顺序 | Blessing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="文章简单介绍了iOS应用的启动顺序，知道内部原理对程序的理解非常重要。因为本篇英文比较简单，故没有进行翻译，希望大家能在看完本文后有所收获。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS应用启动顺序">
+<meta property="og:url" content="http://poino.cn/2016/04/09/iOS应用启动顺序/index.html">
+<meta property="og:site_name" content="Blessing">
+<meta property="og:description" content="文章简单介绍了iOS应用的启动顺序，知道内部原理对程序的理解非常重要。因为本篇英文比较简单，故没有进行翻译，希望大家能在看完本文后有所收获。">
+<meta property="og:image" content="http://poino.cn/assets/blogImg/ios-4-app-launch-flow.png">
+<meta property="og:updated_time" content="2016-04-23T04:29:53.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS应用启动顺序">
+<meta name="twitter:description" content="文章简单介绍了iOS应用的启动顺序，知道内部原理对程序的理解非常重要。因为本篇英文比较简单，故没有进行翻译，希望大家能在看完本文后有所收获。">
+<meta name="twitter:image" content="http://poino.cn/assets/blogImg/ios-4-app-launch-flow.png">
+  
+    <link rel="alternative" href="/atom.xml" title="Blessing" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/assets/blogImg/portrait.png" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Samuel Xie</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">眼角凝固着寒冬黑色的风，包裹着寂寞拖延时间褪色。</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						
+						<li>About</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/SamuelXie" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://www.weibo.com/u/5270169644/" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/tags/iOS基础/" style="font-size: 10px;">iOS基础</a> <a href="/tags/ss/" style="font-size: 10px;">ss</a>
+					</div>
+				</section>
+				
+				
+				
+
+				
+				
+				<section class="switch-part switch-part3">
+				
+					<div id="js-aboutme">Hey! I am Samuel Xie. An iOS stubborn character ;)</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Samuel Xie</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/assets/blogImg/portrait.png" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Samuel Xie</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">眼角凝固着寒冬黑色的风，包裹着寂寞拖延时间褪色。</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/SamuelXie" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://www.weibo.com/u/5270169644/" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-iOS应用启动顺序" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/04/09/iOS应用启动顺序/" class="article-date">
+  	<time datetime="2016-04-09T11:26:32.000Z" itemprop="datePublished">2016-04-09</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS应用启动顺序
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS基础/">iOS基础</a></li></ul>
+	</div>
+
+        
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Foundation/">Foundation</a>
+	</div>
+
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>文章简单介绍了iOS应用的启动顺序，知道内部原理对程序的理解非常重要。因为本篇英文比较简单，故没有进行翻译，希望大家能在看完本文后有所收获。</p>
+</blockquote>
+<a id="more"></a>
+<p><img src="/assets/blogImg/ios-4-app-launch-flow.png" alt="Launch Sequence"></p>
+<h1 id="Launch-Sequence"><a href="#Launch-Sequence" class="headerlink" title="Launch Sequence"></a>Launch Sequence</h1><p>1、 First, the function creates the main application object (step 3 in the flowchart). If you specify nil as the third argument to UIApplicationMain() (the default), it will create an instance of UIApplication in this step. This is usually what you want. However, if you need to subclass UIApplication (for example, to override its event handling in sendEvent:), you have to pass a string with the name of your subclass to UIApplicationMain().<br>2、 The function then looks at its fourth argument. If it is non-nil, it interprets it as the name of the class for the application delegate, instantiates an object of this class and assigns it as the application object’s delegate. The default for the fourth argument is nil, though, which signifies that the app delegate will be created in the main NIB file.<br>3、 Next, UIApplicationMain() loads and parses your app’s Info.plist (step 4). If it contains a key named “Main nib file base name” (NSMainNibFile), the function will also load the NIB file specified there (step 5).<br>4、 By default, the main NIB file is called MainWindow.nib. It contains at least an object representing the application delegate, connected to the File’s Owner’s delegate outlet (step 6), and a UIWindow object that will be used as the app’s main window, connected to an outlet of the app delegate. If you used a view-controller-based app template, the NIB file will also contain your app’s root view controller and possibly one or more view child controllers.<br>It is worth mentioning that this is the only step where the UIKit-based app templates (Window-based, View-based, Navigation-based, Tab-based, etc.) differ significantly from each other. If you started out with a view-based app and later want to introduce a navigation controller, there is no need to start a new project: simply replace the root view controller in the main NIB file and adjust one or two lines of code in the app delegate. I noticed that many newbies to the iOS platform struggle with this problem and assume a huge difference between the different project templates. There isn’t.<br>5、 Now, UIApplicationMain() creates the application’s run loop that is used by the UIApplication instance to process events such as touches or network events (step 7). The run loop is basically an infinite loop that causes UIApplicationMain() to never return.<br>6、 Before the application object processes the first event, it finally sends the well-known application:didFinishLaunchingWithOptions: message to its delegate, giving us the chance to do our own setup (step 8). The least we have to do here is put our main window on the screen by sending it a makeKeyAndVisible message.</p>
+<h1 id="Entry-points"><a href="#Entry-points" class="headerlink" title="Entry points"></a>Entry points</h1><p>You see, there is no magic here. Besides application:didFinishLaunchingWithOptions:, there are several more entry points for custom code during the launch sequence (none of which are usually needed):</p>
+<p>Directly in main() before UIApplicationMain() is called.<br>The init method of a custom UIApplication subclass.<br>The initWithCoder: or awakeFromNib methods of our application delegate if it is created from a NIB file (the default).<br>The + initialize methods of our application delegate class or a custom UIApplication subclass. Any class receives an + initialize message before it is sent its first message from within the program.</p>
+<p>Note that this sequence only happens at the actual launch of an app. If the app is already running and simply brought back from the background, none of this occurs.</p>
+<h1 id="在中国都说要走“三步”，我也整理了一下具有中国特色的启动顺序："><a href="#在中国都说要走“三步”，我也整理了一下具有中国特色的启动顺序：" class="headerlink" title="在中国都说要走“三步”，我也整理了一下具有中国特色的启动顺序："></a>在中国都说要走“三步”，我也整理了一下具有中国特色的启动顺序：</h1><h2 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h2><p><code>UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));</code><br><code>UIApplicationMain</code>函数中一共有四个参数，第一个第二个没什么变化，跟C类大多数语言相同，传参用。第三个第四个则是UIKit中的内容了。通过苹果官方文档的说法，<code>第三个参数是NSString * __nullable principalClassName，nil创建默认UIApplication实例</code>，也可以通过传入继承UIApplication的子类来重写相应链的处理方式。<code>第四个参数指定加载的AppDelegate的类，若为nil，则从main.nib中加载</code>。</p>
+<h2 id="第二步"><a href="#第二步" class="headerlink" title="第二步"></a>第二步</h2><p>加载<code>info.plist</code>文件，有一个value为main的record，这个是改initial视图的，删掉该字段就可以愉快的用代码在<code>AppDelegate</code>中编程了:)</p>
+<h2 id="第三步"><a href="#第三步" class="headerlink" title="第三步"></a>第三步</h2><p>通过<code>UIApplication</code>实例创建<code>RunLoop</code>，用来处理touches或network一类的响应事件。<br>在这些都做好后，发送消息<code>application:didFinishLaunchingWithOptions:</code>给你<code>自己写的AppDelegate</code>，then enjoy:)</p>
+<p>另外，这个launch sequence只是在应用初次启动时的顺序，如果程序已经运行或从挂起放到前台，不会走这个顺序。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/04/03/UIScrollView原理/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">UIScrollView原理</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+<div class="share_addthis">
+  <div class="sharing addthis_toolbox share">
+    <a class="addthis_button_facebook_like"></a>
+    <a class="addthis_button_tweet"></a>
+    <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+    <a class="addthis_counter addthis_pill_style"></a>
+  </div>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-560c64c35486b3d4" async="async"></script>
+</div>
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="iOS应用启动顺序" data-title="iOS应用启动顺序" data-url="http://poino.cn/2016/04/09/iOS应用启动顺序/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"poino"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Samuel Xie
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
